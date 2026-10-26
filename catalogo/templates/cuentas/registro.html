@@ -1,0 +1,55 @@
+{% extends 'catalogo/base.html' %}
+
+{% block titulo %}Crear cuenta · PideLeña Victoria{% endblock %}
+
+{% block contenido %}
+<div class="caja-auth">
+    <h1>Crear cuenta</h1>
+    <p class="caja-auth__bajada">
+        Si eres cliente, podrás publicar pedidos. Si eres proveedor, verás las solicitudes
+        de los vecinos y podrás tomarlas.
+    </p>
+
+    <form method="post" id="form-registro">
+        {% csrf_token %}
+        {% for campo in form %}
+        <div class="campo
+                    {% if campo.name == 'tipo_cuenta' %}campo--opciones{% endif %}
+                    {% if campo.name in campos_proveedor %}campo--proveedor{% endif %}">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% if campo.help_text %}<span class="campo__ayuda">{{ campo.help_text|safe }}</span>{% endif %}
+            {% for error in campo.errors %}<span class="campo__error">{{ error }}</span>{% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="boton boton--ancho">Crear mi cuenta</button>
+    </form>
+
+    <div class="caja-auth__pie">
+        ¿Ya tienes cuenta? <a href="{% url 'login' %}">Ingresar</a>
+    </div>
+</div>
+
+<script>
+    // Los campos del negocio solo tienen sentido para proveedores.
+    // Sin JavaScript se muestran todos y el servidor valida igual.
+    (function () {
+        var formulario = document.getElementById('form-registro');
+        var opciones = formulario.querySelectorAll('input[name="tipo_cuenta"]');
+        var camposProveedor = formulario.querySelectorAll('.campo--proveedor');
+
+        function actualizar() {
+            var elegida = formulario.querySelector('input[name="tipo_cuenta"]:checked');
+            var esProveedor = elegida && elegida.value === 'PROVEEDOR';
+            camposProveedor.forEach(function (campo) {
+                campo.hidden = !esProveedor;
+            });
+        }
+
+        opciones.forEach(function (opcion) {
+            opcion.addEventListener('change', actualizar);
+        });
+        actualizar();
+    })();
+</script>
+{% endblock %}

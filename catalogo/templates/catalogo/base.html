@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}PideLeña Victoria — proveedores de leña, carbón y pellet{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a href="{% url 'catalogo:inicio' %}" class="marca">
+                <svg class="marca__anillo" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="15" cy="15" r="13.5" stroke="#7a4a2b" stroke-width="1.4"/>
+                    <circle cx="15" cy="15" r="9.5" stroke="#b5541f" stroke-width="1.4"/>
+                    <circle cx="15" cy="15" r="5.5" stroke="#7a4a2b" stroke-width="1.4"/>
+                    <circle cx="15" cy="15" r="1.6" fill="#5c3720"/>
+                </svg>
+                <span>
+                    <span class="marca__texto">PideLeña Victoria</span>
+                    <span class="marca__region">Región de La Araucanía</span>
+                </span>
+            </a>
+
+            <nav class="nav">
+                {% if user.is_authenticated %}
+                    {% if es_proveedor %}
+                        <a href="{% url 'proveedor:perfil' %}" class="nav__link">Mi negocio</a>
+                    {% endif %}
+                    <span class="nav__usuario">{{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="nav__salir">
+                        {% csrf_token %}
+                        <button type="submit" class="nav__link nav__link--boton">Salir</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav__link">Ingresar</a>
+                    <a href="{% url 'catalogo:registro' %}" class="boton boton--pequeno">Crear cuenta</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% if messages %}
+    <div class="mensajes">
+        {% for mensaje in messages %}
+        <p class="mensaje mensaje--{{ mensaje.tags }}">{{ mensaje }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block contenido %}{% endblock %}
+
+    <footer class="site-footer">
+        PideLeña Victoria · Módulo de cuentas y catálogo de proveedores
+    </footer>
+</body>
+</html>

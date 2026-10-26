@@ -1,0 +1,51 @@
+{% extends 'catalogo/base.html' %}
+{% load precio_tags %}
+
+{% block titulo %}PideLeña Victoria — proveedores de la zona{% endblock %}
+
+{% block contenido %}
+<section class="hero">
+    <span class="hero__kicker">Victoria, Región de La Araucanía</span>
+    <h1>Proveedores de leña, carbón y pellet de la zona.</h1>
+    <p>
+        Cada proveedor publica y administra su propio catálogo: qué vende, a qué precio
+        referencial y hasta dónde despacha.
+    </p>
+    <div class="hero__acciones">
+        {% if es_proveedor %}
+        <a href="{% url 'proveedor:perfil' %}" class="boton">Ir a mi negocio</a>
+        {% elif not user.is_authenticated %}
+        <a href="{% url 'catalogo:registro' %}" class="boton">Crear cuenta de proveedor</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="catalogo">
+    <div class="catalogo__cabecera">
+        <h2>Proveedores registrados</h2>
+    </div>
+
+    {% if proveedores %}
+    <div class="grid-productos">
+        {% for proveedor in proveedores %}
+        <a href="{% url 'catalogo:detalle_vendedor' proveedor.pk %}" class="tarjeta">
+            <div class="tarjeta__cuerpo">
+                <div class="tarjeta__titulo">{{ proveedor.nombre }}</div>
+                <p class="tarjeta__vendedor">{{ proveedor.sector }}</p>
+                {% if proveedor.productos.all %}
+                <p class="tarjeta__humedad">
+                    Vende:
+                    {% for producto in proveedor.productos.all %}{{ producto.nombre_publico|lower }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                </p>
+                {% else %}
+                <p class="tarjeta__humedad">Todavía sin productos publicados</p>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="vacio">Todavía no hay proveedores registrados.</p>
+    {% endif %}
+</section>
+{% endblock %}

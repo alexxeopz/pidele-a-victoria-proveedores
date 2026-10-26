@@ -1,0 +1,85 @@
+{% extends 'catalogo/base.html' %}
+{% load precio_tags %}
+
+{% block titulo %}Mi negocio · PideLeña Victoria{% endblock %}
+
+{% block contenido %}
+<div class="panel">
+    <a class="enlace-volver" href="{% url 'catalogo:inicio' %}">← Volver al inicio</a>
+
+    <div class="panel__titulo-fila">
+        <div>
+            <h1>Mi negocio</h1>
+            <p class="panel__bajada">Así te ven los clientes cuando revisan tu perfil.</p>
+        </div>
+        <a href="{% url 'catalogo:detalle_vendedor' vendedor.pk %}" class="nav__link">Ver mi perfil público →</a>
+    </div>
+
+    <section class="panel__seccion">
+        <h2>Datos del negocio</h2>
+        <form method="post" class="form-panel">
+            {% csrf_token %}
+            {% for campo in form %}
+            <div class="campo">
+                <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+                {{ campo }}
+                {% if campo.help_text %}<span class="campo__ayuda">{{ campo.help_text }}</span>{% endif %}
+                {% for error in campo.errors %}<span class="campo__error">{{ error }}</span>{% endfor %}
+            </div>
+            {% endfor %}
+            <div class="form-panel__acciones">
+                <button type="submit" class="boton">Guardar datos</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel__seccion">
+        <div class="panel__titulo-fila">
+            <h2>Mis productos</h2>
+            <a href="{% url 'proveedor:producto_crear' %}" class="boton boton--pequeno">+ Agregar producto</a>
+        </div>
+        <p class="campo__ayuda">
+            Lo que los clientes ven en tu perfil. Los precios son referenciales: el valor final
+            lo acuerdas tú con cada cliente por WhatsApp.
+        </p>
+
+        {% if productos %}
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Producto</th>
+                    <th>Precio ref.</th>
+                    <th>Unidad</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>
+                        {% if producto.imagen %}
+                        <img class="miniatura" src="{{ producto.imagen.url }}" alt="{{ producto.nombre_publico }}">
+                        {% else %}
+                        <span class="tabla__nota">sin foto</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ producto.nombre_publico }}</strong></td>
+                    <td>${{ producto.precio|clp }}</td>
+                    <td>{{ producto.get_unidad_display }}</td>
+                    <td>{% if producto.disponible %}<span class="insignia">Visible</span>{% else %}<span class="insignia insignia--gris">Oculto</span>{% endif %}</td>
+                    <td class="tabla__acciones">
+                        <a href="{% url 'proveedor:producto_editar' producto.pk %}">Editar</a>
+                        <a href="{% url 'proveedor:producto_eliminar' producto.pk %}" class="enlace-peligro">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="vacio">Todavía no has cargado productos. Los clientes verán tu perfil vacío.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

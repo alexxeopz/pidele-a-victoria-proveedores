@@ -1,0 +1,56 @@
+{% extends 'catalogo/base.html' %}
+{% load precio_tags %}
+
+{% block titulo %}{{ vendedor.nombre }} — proveedor en {{ vendedor.sector }}{% endblock %}
+
+{% block contenido %}
+<div class="detalle">
+    <a class="enlace-volver" href="{% url 'catalogo:inicio' %}">← Volver a proveedores</a>
+
+    <div class="perfil">
+        <h1>{{ vendedor.nombre }}</h1>
+        <p class="perfil__sector">{{ vendedor.sector }} · Victoria, La Araucanía</p>
+        {% if vendedor.descripcion %}
+        <p class="perfil__descripcion">{{ vendedor.descripcion }}</p>
+        {% endif %}
+        <p class="perfil__despacho">🚚 {{ vendedor.descripcion_despacho }}</p>
+    </div>
+
+    {% if productos %}
+    <h2 class="seccion-titulo">Lo que vende</h2>
+    <div class="grid-productos">
+        {% for producto in productos %}
+        <div class="tarjeta tarjeta--estatica">
+            {% if producto.imagen %}
+            <img class="tarjeta__imagen" src="{{ producto.imagen.url }}" alt="{{ producto.nombre_publico }}">
+            {% else %}
+            <div class="tarjeta__imagen tarjeta__imagen--vacia">
+                <svg width="34" height="34" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="15" cy="15" r="13.5" stroke="currentColor" stroke-width="1.2"/>
+                    <circle cx="15" cy="15" r="9" stroke="currentColor" stroke-width="1.2"/>
+                    <circle cx="15" cy="15" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+                </svg>
+            </div>
+            {% endif %}
+            <div class="tarjeta__cuerpo">
+                <div class="tarjeta__titulo">{{ producto.nombre_publico }}</div>
+                <p class="tarjeta__precio">
+                    ${{ producto.precio|clp }} <span>/ {{ producto.get_unidad_display|lower }}</span>
+                </p>
+                <p class="tarjeta__humedad">Puesto en Victoria</p>
+                {% if producto.descripcion %}
+                <p class="pedido__proveedor">{{ producto.descripcion }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <p class="campo__ayuda">
+        Los precios incluyen el despacho dentro de Victoria. Fuera de la ciudad se suma el
+        despacho del proveedor.
+    </p>
+    {% else %}
+    <p class="vacio">Este proveedor todavía no ha publicado productos.</p>
+    {% endif %}
+</div>
+{% endblock %}

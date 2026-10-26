@@ -1,0 +1,21 @@
+{% extends 'catalogo/base.html' %}
+
+{% block titulo %}Eliminar producto · PideLeña Victoria{% endblock %}
+
+{% block contenido %}
+<div class="panel panel--angosto">
+    <a class="enlace-volver" href="{% url 'proveedor:perfil' %}">← Volver a mi negocio</a>
+    <h1>¿Eliminar este producto?</h1>
+
+    <p class="confirmacion">
+        Vas a quitar <strong>{{ producto.nombre_publico }}</strong> de tu catálogo.
+        Dejará de aparecer en tu perfil.
+    </p>
+
+    <form method="post" class="form-panel__acciones">
+        {% csrf_token %}
+        <button type="submit" class="boton boton--peligro">Sí, eliminar</button>
+        <a href="{% url 'proveedor:perfil' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

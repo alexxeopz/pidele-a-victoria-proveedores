@@ -1,0 +1,33 @@
+{% extends 'catalogo/base.html' %}
+
+{% block titulo %}{{ titulo }} · PideLeña Victoria{% endblock %}
+
+{% block contenido %}
+<div class="panel panel--angosto">
+    <a class="enlace-volver" href="{% url 'proveedor:perfil' %}">← Volver a mi negocio</a>
+    <h1>{{ titulo }}</h1>
+    <p class="panel__bajada">
+        Esto es lo que verán los clientes en tu perfil. El precio es referencial — el valor
+        final lo acuerdas tú con cada cliente por WhatsApp.
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="form-panel">
+        {% csrf_token %}
+        {% for campo in form %}
+        <div class="campo">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% if campo.help_text %}<span class="campo__ayuda">{{ campo.help_text }}</span>{% endif %}
+            {% for error in campo.errors %}<span class="campo__error">{{ error }}</span>{% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="form-panel__acciones">
+            <button type="submit" class="boton">Guardar</button>
+            {% if producto %}
+            <a href="{% url 'proveedor:producto_eliminar' producto.pk %}" class="enlace-peligro">Eliminar</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'catalogo/base.html' %}
+
+{% block titulo %}Ingresar · PideLeña Victoria{% endblock %}
+
+{% block contenido %}
+<div class="caja-auth">
+    <h1>Ingresar</h1>
+    <p class="caja-auth__bajada">Entra para hacer un pedido o, si eres proveedor, para ver las solicitudes.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <p class="campo__error">Usuario o contraseña incorrectos.</p>
+        {% endif %}
+        {% for campo in form %}
+        <div class="campo">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% for error in campo.errors %}<span class="campo__error">{{ error }}</span>{% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="boton boton--ancho">Ingresar</button>
+    </form>
+
+    <div class="caja-auth__pie">
+        <a href="{% url 'password_reset' %}">Olvidé mi contraseña</a>
+        <span>·</span>
+        <a href="{% url 'catalogo:registro' %}">Crear cuenta</a>
+    </div>
+
+</div>
+{% endblock %}
